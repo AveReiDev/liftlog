@@ -11,6 +11,7 @@ import { startFromWorkout, startFromSession, startEmpty } from './engine/session
 import { createRouter } from './ui/router.js';
 import { closeAllSheets } from './ui/sheet.js';
 import { localISO, toast } from './ui/util.js';
+import { showWelcome } from './ui/welcome.js';
 import { createTrainScreen } from './ui/screens/train.js';
 import { createSessionScreen } from './ui/screens/session.js';
 import { createProgressScreen } from './ui/screens/progress.js';
@@ -18,7 +19,10 @@ import { createHistoryScreen } from './ui/screens/history.js';
 import { createPlansScreen } from './ui/screens/plans.js';
 import { createSettingsScreen } from './ui/screens/settings.js';
 
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
+
+/** Coming back to the app after this long counts as opening it again. */
+const WELCOME_AFTER_MS = 30 * 60 * 1000;
 
 const app = {
   now: () => Date.now(),
@@ -81,6 +85,20 @@ async function boot() {
 
   // A workout left open (phone locked, app swiped away) picks up where it was.
   app.router.show(app.history.active ? 'session' : 'train');
+
+  // A welcome note each time the app opens (messages live on the phone only).
+  const welcome = () => {
+    const m = app.settings.nextMessage();
+    if (m) showWelcome(m);
+  };
+  app.showWelcome = welcome;
+  welcome();
+  let hiddenAt = null;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { hiddenAt = app.now(); return; }
+    if (hiddenAt !== null && app.now() - hiddenAt >= WELCOME_AFTER_MS) welcome();
+    hiddenAt = null;
+  });
 
   try {
     const flash = sessionStorage.getItem('liftlog.flash');

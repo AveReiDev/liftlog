@@ -24,7 +24,7 @@
  *                       with no signal; updates land on the following launch.
  */
 
-const CACHE_VERSION = 'liftlog-v1.0.0';
+const CACHE_VERSION = 'liftlog-v1.1.0';
 
 /** Everything needed to run with no network. */
 const SHELL = [
@@ -56,6 +56,7 @@ const SHELL = [
   './src/ui/screens/train.js',
   './src/ui/sheet.js',
   './src/ui/util.js',
+  './src/ui/welcome.js',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',

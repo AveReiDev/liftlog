@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { SHIPPED, EXERCISES, memoryStorage, memoryBackend } from './fixtures.js';
 import { createStorage, KEYS } from '../src/store/storage.js';
 import { createLibrary, slug } from '../src/store/library.js';
-import { createSettings } from '../src/store/settings.js';
+import { createSettings, cleanMessages } from '../src/store/settings.js';
 import { createWorkouts } from '../src/store/workouts.js';
 import { createHistory, cleanSession } from '../src/store/history.js';
 import { createBackup, parseBackup, restoreBackup, backupFilename } from '../src/store/backup.js';
@@ -163,7 +163,7 @@ test('backup round-trips and merges without losing device data', () => {
   const parsed = parseBackup(text);
   assert.ok(parsed.ok);
   const r = restoreBackup(b, parsed.backup);
-  assert.deepEqual(r, { sessions: 1, workouts: 1, exercises: 1 });
+  assert.deepEqual(r, { sessions: 1, workouts: 1, exercises: 1, messages: 0 });
   assert.deepEqual(createHistory({ storage: b }).all().map((s) => s.id), ['s2', 's1']);
   assert.equal(restoreBackup(b, parsed.backup).sessions, 0, 'importing twice adds nothing');
 });
@@ -173,4 +173,39 @@ test('parseBackup explains what is wrong with a bad file', () => {
   assert.match(parseBackup('{"app":"strikr","format":1}').error, /Lift Log/);
   assert.match(parseBackup('{"app":"liftlog","format":9}').error, /format 9/);
   assert.match(backupFilename(Date.UTC(2026, 9, 12, 12)), /^liftlog-backup-2026-10-12\.json$/);
+});
+
+// ---- welcome messages ----------------------------------------------------
+
+test('welcome messages cycle in order and survive a reload', () => {
+  const storage = memoryStorage();
+  const s = createSettings({ storage, stations: SHIPPED.stations });
+  assert.equal(s.nextMessage(), null, 'nothing shows until there are messages');
+  s.setMessages('Have a great workout!\n\n  Proud of you  \nGo get it', 'A');
+  assert.deepEqual(s.messages, ['Have a great workout!', 'Proud of you', 'Go get it']);
+  assert.deepEqual(s.nextMessage(), { text: 'Have a great workout!', from: 'A' });
+  assert.equal(s.nextMessage().text, 'Proud of you');
+  const again = createSettings({ storage, stations: SHIPPED.stations });
+  assert.equal(again.nextMessage().text, 'Go get it', 'picks up where it left off');
+  assert.equal(again.nextMessage().text, 'Have a great workout!', 'then starts over');
+});
+
+test('cleanMessages trims, drops blanks and caps length', () => {
+  assert.deepEqual(cleanMessages(['  hi ', '', 3, 'x'.repeat(400)]).map((m) => m.length), [2, 280]);
+  assert.deepEqual(cleanMessages(null), []);
+});
+
+test('a message file replaces messages but keeps her theme and gym', () => {
+  const storage = memoryStorage();
+  const s = createSettings({ storage, stations: SHIPPED.stations });
+  s.setTheme('dark');
+  s.setStation('ski-erg', false);
+  s.setMessages(['old'], 'A');
+  const r = restoreBackup(storage, { app: 'liftlog', format: 1, settings: { messages: ['new one', 'new two'], messageFrom: 'A' } });
+  assert.equal(r.messages, 2);
+  const after = createSettings({ storage, stations: SHIPPED.stations });
+  assert.deepEqual(after.messages, ['new one', 'new two']);
+  assert.equal(after.theme, 'dark');
+  assert.ok(!after.hasStation('ski-erg'));
+  assert.equal(after.nextMessage().text, 'new one');
 });

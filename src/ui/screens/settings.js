@@ -1,11 +1,12 @@
 /**
- * Settings: theme, which equipment her gym has, and backups.
+ * Settings: theme, welcome messages, which equipment her gym has, and backups.
  */
 
-import { esc, toast } from '../util.js';
-import { confirmSheet } from '../sheet.js';
-import { THEMES } from '../../store/settings.js';
+import { esc, toast, plural } from '../util.js';
+import { confirmSheet, openSheet } from '../sheet.js';
+import { THEMES, MAX_MESSAGES, MAX_MESSAGE_LENGTH, cleanMessages } from '../../store/settings.js';
 import { createBackup, backupFilename, parseBackup, restoreBackup } from '../../store/backup.js';
+import { showWelcome } from '../welcome.js';
 
 const THEME_LABEL = { system: 'Match phone', light: 'Light', dark: 'Dark' };
 
@@ -22,6 +23,11 @@ export function createSettingsScreen({ root, app, version }) {
 
       <div class="section-label">Appearance</div>
       <div class="seg" role="group" aria-label="Theme">${THEMES.map((t) => `<button data-theme-pick="${t}" aria-pressed="${settings.theme === t}">${THEME_LABEL[t]}</button>`).join('')}</div>
+
+      <div class="section-label">Welcome messages</div>
+      <div class="card">
+        <button class="row" data-messages><span class="row-main"><span class="row-title">Messages when the app opens</span><span class="row-sub">${settings.messages.length ? `${plural(settings.messages.length, 'message')}${settings.messageFrom ? `, from ${esc(settings.messageFrom)}` : ''}` : 'None yet'}</span></span><span class="chev">›</span></button>
+      </div>
 
       <div class="section-label">Backup</div>
       <div class="card">
@@ -61,6 +67,8 @@ export function createSettingsScreen({ root, app, version }) {
     } else if (t.dataset.all !== undefined) {
       for (const id of Object.keys(library.stations)) settings.setStation(id, true);
       render();
+    } else if (t.dataset.messages !== undefined) {
+      editMessages();
     } else if (t.dataset.export !== undefined) {
       exportBackup();
     } else if (t.dataset.import !== undefined) {
@@ -89,10 +97,43 @@ export function createSettingsScreen({ root, app, version }) {
       r.sessions && `${r.sessions} sessions`,
       r.workouts && `${r.workouts} plans`,
       r.exercises && `${r.exercises} exercises`,
+      r.messages && 'new messages',
     ].filter(Boolean);
     sessionStorage.setItem('liftlog.flash', bits.length ? `Imported ${bits.join(', ')}` : 'Nothing new in that backup');
     location.reload();   // every store re-reads, and re-cleans, what was written
   });
+
+  function editMessages() {
+    openSheet({
+      title: 'Welcome messages',
+      tall: true,
+      closeLabel: 'Cancel',
+      body: `
+        <p class="hint" style="margin-top:0">One message per line. Each time the app opens it shows the next one, then starts over.</p>
+        <div class="field"><label for="msg-list">Messages</label>
+          <textarea class="input" id="msg-list" rows="8" placeholder="Have a great workout!">${esc(settings.messages.join('\n'))}</textarea>
+          <span class="hint">Up to ${MAX_MESSAGES} messages, ${MAX_MESSAGE_LENGTH} characters each.</span></div>
+        <div class="field"><label for="msg-from">Signed</label><input class="input" id="msg-from" value="${esc(settings.messageFrom)}" placeholder="Your name" autocomplete="off"></div>
+        <button class="btn block" data-preview>Preview</button>`,
+      foot: '<button class="btn primary block" data-save>Save messages</button>',
+      onMount(el, close) {
+        const list = () => cleanMessages(el.querySelector('#msg-list').value);
+        const from = () => el.querySelector('#msg-from').value;
+        el.querySelector('#msg-list').style.minHeight = '180px';
+        el.querySelector('[data-preview]').addEventListener('click', () => {
+          const first = list()[0];
+          if (!first) { toast('Write a message first.'); return; }
+          showWelcome({ text: first, from: from().trim() });
+        });
+        el.querySelector('[data-save]').addEventListener('click', () => {
+          settings.setMessages(list(), from());
+          close();
+          render();
+          toast(settings.messages.length ? `Saved ${plural(settings.messages.length, 'message')}` : 'Messages cleared');
+        });
+      },
+    });
+  }
 
   async function exportBackup() {
     const now = app.now();

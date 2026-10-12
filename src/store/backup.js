@@ -62,7 +62,7 @@ function unionById(current, incoming) {
  * The caller reloads so every store re-reads, and re-cleans, what was written.
  */
 export function restoreBackup(storage, backup) {
-  const result = { sessions: 0, workouts: 0, exercises: 0 };
+  const result = { sessions: 0, workouts: 0, exercises: 0, messages: 0 };
 
   if (Array.isArray(backup.history)) {
     const { list, added } = unionById(raw(storage, KEYS.history), backup.history);
@@ -83,8 +83,20 @@ export function restoreBackup(storage, backup) {
     });
     result.exercises = added;
   }
-  if (isObject(backup.settings) && !isObject(raw(storage, KEYS.settings))) {
-    storage.write(KEYS.settings, backup.settings);
+  if (isObject(backup.settings)) {
+    const current = raw(storage, KEYS.settings);
+    if (!isObject(current)) {
+      storage.write(KEYS.settings, backup.settings);
+    } else if (Array.isArray(backup.settings.messages)) {
+      // A message file replaces the welcome messages but leaves her theme and gym alone.
+      storage.write(KEYS.settings, {
+        ...current,
+        messages: backup.settings.messages,
+        messageFrom: backup.settings.messageFrom ?? current.messageFrom,
+        messageIndex: 0,
+      });
+    }
+    if (Array.isArray(backup.settings.messages)) result.messages = backup.settings.messages.length;
   }
   return result;
 }

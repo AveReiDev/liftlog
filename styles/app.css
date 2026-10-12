@@ -318,3 +318,38 @@ svg text.val { fill: var(--fg); font-weight: 600; }
   max-width: calc(100vw - 32px); text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 body[data-mode="session"] #toast { bottom: calc(env(safe-area-inset-bottom) + 96px); }
+
+/* ---- Welcome note ------------------------------------------------------- */
+
+.welcome {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; align-content: center; gap: var(--sp-6);
+  padding: calc(env(safe-area-inset-top) + var(--sp-6)) var(--sp-6) calc(env(safe-area-inset-bottom) + var(--sp-6));
+  background: var(--accent); color: var(--accent-fg);
+  opacity: 0; transition: opacity 350ms ease;
+  cursor: pointer;
+}
+.welcome.open { opacity: 1; }
+.welcome-card { max-width: 30ch; text-align: center; display: grid; gap: var(--sp-4); justify-items: center; transform: translateY(12px) scale(0.98); transition: transform 500ms cubic-bezier(.2,.8,.2,1); }
+.welcome.open .welcome-card { transform: none; }
+.welcome-heart svg { width: 44px; height: 44px; fill: var(--pr); }
+.welcome.open .welcome-heart svg { animation: beat 1.4s ease-in-out 300ms 2; }
+.welcome-text { margin: 0; font-size: clamp(1.6rem, 7.5vw, 2.2rem); font-weight: var(--weight-black); letter-spacing: -0.015em; line-height: 1.15; text-wrap: balance; }
+.welcome-from { margin: 0; font-size: var(--size-lg); font-weight: var(--weight-mid); opacity: 0.85; }
+.welcome-from::before { content: "— "; }
+.welcome-hint { position: absolute; bottom: calc(env(safe-area-inset-bottom) + var(--sp-8)); left: 0; right: 0; margin: 0; text-align: center; font-size: var(--size-sm); opacity: 0.7; }
+
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.18); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome, .welcome-card { transition: none; }
+  .welcome.open .welcome-heart svg { animation: none; }
+}
+
+.msg-preview { padding: var(--sp-4); display: grid; gap: var(--sp-1); }
+.msg-preview .row-sub { white-space: pre-line; }
