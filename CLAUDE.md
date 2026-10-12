@@ -11,6 +11,12 @@ and design decisions before changing behaviour. Same conventions as `../strikr`.
 2. Busy equipment: "Busy? Swap" suggests exercises with the same movement
    pattern on a free station her gym has (Settings → My gym).
 
+## Hosting
+
+Live at https://avereidev.github.io/liftlog/ (GitHub Pages, `main`, repo root).
+**`git push` to `main` publishes to her phone**: only push work that passed tests
+and a browser smoke test, and confirm with the user first.
+
 ## Privacy
 
 The repo is public. **Never commit anyone's training data, names or backup

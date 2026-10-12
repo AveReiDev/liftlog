@@ -4,7 +4,8 @@ Last updated 12 October 2026.
 
 ## Where it stands
 
-**v1.0.0 built and smoke-tested in the browser. Not yet on GitHub or on her phone.**
+**v1.0.0 is live at https://avereidev.github.io/liftlog/** (repo: github.com/AveReiDev/liftlog,
+GitHub Pages from `main`, repo root). Awaiting install and first use on her phone.
 
 | Area | State |
 |---|---|
@@ -41,9 +42,9 @@ Last updated 12 October 2026.
 - **Data lives on the phone** (localStorage). Backup export via the iOS share
   sheet is the safety net.
 
-## Getting it on her phone (once it's pushed)
+## Getting it on her phone
 
-1. Open the GitHub Pages address in **Safari** on her iPhone.
+1. Open **https://avereidev.github.io/liftlog/** in **Safari** on her iPhone.
 2. Share → **Add to Home Screen**. Open it from the icon; it works offline.
 3. AirDrop the import file (kept outside this repo) to her phone and save it to Files.
 4. In the app: Settings → Import backup → pick that file.
