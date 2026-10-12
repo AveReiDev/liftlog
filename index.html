@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f1f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0f0e" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Lift Log">
+<meta name="format-detection" content="telephone=no">
+<title>Lift Log</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-180.png">
+<link rel="icon" href="./icons/icon-192.png" type="image/png">
+<link rel="stylesheet" href="./styles/tokens.css">
+<link rel="stylesheet" href="./styles/app.css">
+</head>
+<body data-mode="browse">
+
+<main id="app">
+  <section class="screen" id="screen-train"></section>
+  <section class="screen" id="screen-session"></section>
+  <section class="screen" id="screen-progress"></section>
+  <section class="screen" id="screen-history"></section>
+  <section class="screen" id="screen-plans"></section>
+  <section class="screen" id="screen-settings"></section>
+</main>
+
+<nav id="tabbar" aria-label="Sections">
+  <button class="tab" data-tab="train">
+    <svg viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M6.5 7.5v9M17.5 7.5v9M4 9.5v5M20 9.5v5M6.5 12h11"/></svg>
+    Train
+  </button>
+  <button class="tab" data-tab="progress">
+    <svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 16l5-5 3 3 6-7"/><path d="M15 7h4v4"/></svg>
+    Progress
+  </button>
+  <button class="tab" data-tab="history">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    History
+  </button>
+  <button class="tab" data-tab="plans">
+    <svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 8.5h6M9 12h6M9 15.5h4"/></svg>
+    Plans
+  </button>
+  <button class="tab" data-tab="settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+    Settings
+  </button>
+</nav>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

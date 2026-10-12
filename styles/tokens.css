@@ -1,0 +1,93 @@
+/**
+ * Every colour, type size and spacing value lives here. Nothing in app.css
+ * uses a raw colour.
+ *
+ * Look: chalk-white gym floor, plate-blue accent, bumper-yellow for new bests.
+ * Follows the phone's light/dark setting unless she picks one in Settings
+ * (which sets data-theme on <html>).
+ */
+
+:root {
+  color-scheme: light;
+
+  --bg:          #f1f2ee;
+  --surface:     #ffffff;
+  --surface-2:   #e9ebe6;
+  --line:        #dcdfd8;
+  --line-strong: #c3c7bf;
+
+  --fg:          #131614;
+  --fg-dim:      #5a605b;
+  --fg-mute:     #8a908b;
+
+  --accent:      #1f5fd1;   /* plate blue */
+  --accent-fg:   #ffffff;
+  --accent-soft: #e2ebfb;
+
+  --done:        #1d7f45;
+  --done-soft:   #e0f1e6;
+  --pr:          #f2b200;   /* bumper yellow */
+  --pr-ink:      #634700;
+  --pr-soft:     #fdf1c9;
+  --danger:      #c4352d;
+  --danger-soft: #fbe5e3;
+
+  --shadow:      0 1px 2px rgba(19, 22, 20, 0.06), 0 4px 14px rgba(19, 22, 20, 0.06);
+  --scrim:       rgba(19, 22, 20, 0.38);
+
+  /* ---- type --------------------------------------------------------- */
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --font-num: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+
+  --size-display: clamp(1.9rem, 8vw, 2.25rem);
+  --size-xl:      1.5rem;
+  --size-lg:      1.125rem;
+  --size-md:      1rem;
+  --size-sm:      0.875rem;
+  --size-xs:      0.75rem;
+  --size-num:     2rem;          /* the weight box */
+
+  --weight-black: 800;
+  --weight-bold:  650;
+  --weight-mid:   550;
+
+  --track-label:  0.08em;
+
+  /* ---- space and shape ---------------------------------------------- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --gutter: var(--sp-4);
+
+  --radius:    14px;
+  --radius-sm: 9px;
+  --tap: 44px;
+  --tabbar-h: 58px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d0f0e; --surface: #171a18; --surface-2: #212522; --line: #2a2e2b; --line-strong: #3a3f3b;
+    --fg: #f0f2ef; --fg-dim: #a3a9a4; --fg-mute: #6f7671;
+    --accent: #5b93f0; --accent-fg: #0b1220; --accent-soft: #19263d;
+    --done: #3dbe72; --done-soft: #15301f;
+    --pr: #f5c33b; --pr-ink: #f5c33b; --pr-soft: #2f2710;
+    --danger: #ef6b62; --danger-soft: #3a1917;
+    --shadow: none; --scrim: rgba(0, 0, 0, 0.6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d0f0e; --surface: #171a18; --surface-2: #212522; --line: #2a2e2b; --line-strong: #3a3f3b;
+  --fg: #f0f2ef; --fg-dim: #a3a9a4; --fg-mute: #6f7671;
+  --accent: #5b93f0; --accent-fg: #0b1220; --accent-soft: #19263d;
+  --done: #3dbe72; --done-soft: #15301f;
+  --pr: #f5c33b; --pr-ink: #f5c33b; --pr-soft: #2f2710;
+  --danger: #ef6b62; --danger-soft: #3a1917;
+  --shadow: none; --scrim: rgba(0, 0, 0, 0.6);
+}
